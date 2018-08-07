@@ -962,6 +962,13 @@ class crawler {
 
         $sql = "SELECT DISTINCT log.courseid
                                                  FROM {logstore_standard_log} log
+                                                 join (
+                                                 SELECT DISTINCT con.instanceid
+                                                            FROM mdl_block_instances bi
+                                                            join mdl_context con on con.id=bi.parentcontextid
+                                                           where con.contextlevel=50
+                                                            and bi.blockname='cqu_health'
+                                                 ) block on block.instanceid=log.courseid
                                                 WHERE log.timecreated > :startingtime
                                                 AND target = 'course'
                                                 AND userid <> '19156'
