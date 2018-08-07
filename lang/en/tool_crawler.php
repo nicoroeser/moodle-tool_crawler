@@ -119,8 +119,8 @@ $string['url'] = 'URL';
 $string['urldetails'] = 'URL details';
 $string['urldetails_help'] = 'This shows all incoming and outgoing links for this URL.
 Links which have been blacklisted or which are in excluded DOM elements will not be shown.';
-$string['uselogs'] = 'Use log tables';
-$string['uselogsdesc'] = 'Use the table mdl_logstore_standard_log to only crawl links that are part of courses with recent activity. Setting to yes enables the recentactivity setting.';
+$string['techcheck'] = 'Use tech check block';
+$string['techcheckdesc'] = 'Only include courses that have enabled the tech check block on the main page';
 $string['useragent'] = 'Bot user agent string';
 $string['useragentdesc'] = 'The User agent string it use in the http headers + the version of this plugin';
 $string['whenqueued'] = 'When queued';

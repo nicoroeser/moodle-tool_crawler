@@ -471,8 +471,8 @@ class crawler {
         global $DB;
         $config = $this::get_config();
 
-        if ($config->uselogs == 1) {
-            $recentcourses = $this->get_recentcourses();
+        if ($config->techcheck == 1) {
+            $coursestocheck = $this->get_coursestocheck();
         }
 
         // Iterate through the queue until we find an item that is a recent course, or the time runs out.
@@ -490,15 +490,13 @@ class crawler {
                                         LIMIT 1
                                     ');
 
-            if ($config->uselogs == 1) {
+            if ($config->techcheck == 1) {
 
                 if (isset($node->courseid)) {
 
-                    // If the course id is not in recent courses, remove it from the queue.
-                    if (!in_array($node->courseid, $recentcourses)) {
+                    if (!in_array($node->courseid, $coursestocheck)) {
 
-                        // Will not show up in queue, but still keeps the data
-                        // in case the course becomes recently active in the future.
+                        // Keep the node in the tool_crawler_url table but remove from queue.
                         $node->needscrawl = $node->lastcrawled;
                         $DB->update_record('tool_crawler_url', $node);
                     } else {
@@ -673,7 +671,7 @@ class crawler {
                 }
             }
 
-            if ($config->uselogs == 1) {
+            if ($config->techcheck == 1) {
                 // If this page does not have a course specified in it's classes, don't parse the html.
                 if ($hascourse === false) {
                     if ($verbose) {
@@ -681,9 +679,8 @@ class crawler {
                     }
                     return $node;
                 }
-                // If this course has not been viewed recently, then don't continue on to parse the html.
-                $recentcourses = $this->get_recentcourses();
-                if (!in_array($node->courseid, $recentcourses)) {
+                $coursestocheck = $this->get_coursestocheck();
+                if (!in_array($node->courseid, $coursestocheck)) {
                     if ($verbose) {
                         if ($node->courseid == 1) {
                             echo "Ignore index.php page. \n";
@@ -950,39 +947,26 @@ class crawler {
     }
 
     /**
-     * Grabs the recent courses.
+     * Grabs the courses with the tech check block enabled on the main page.
      *
      * @return array
      */
-    public function get_recentcourses() {
+    public function get_coursestocheck() {
         global $DB;
-        $config = self::get_config();
 
-        $startingtimerecentactivity = strtotime("-$config->recentactivity days", time());
-
-        $sql = "SELECT DISTINCT log.courseid
-                                                 FROM {logstore_standard_log} log
-                                                 join (
-                                                 SELECT DISTINCT con.instanceid
-                                                            FROM mdl_block_instances bi
-                                                            join mdl_context con on con.id=bi.parentcontextid
-                                                           where con.contextlevel=50
-                                                            and bi.blockname='cqu_health'
-                                                 ) block on block.instanceid=log.courseid
-                                                WHERE log.timecreated > :startingtime
-                                                AND target = 'course'
-                                                AND userid <> '19156'
-                                                AND courseid <> 1
+        $sql = "                     SELECT DISTINCT con.instanceid
+                                        FROM mdl_block_instances bi
+                                        join mdl_context con on con.id=bi.parentcontextid
+                                       where con.contextlevel=50
+                                        and bi.blockname='cqu_health'
                                             ";
-        $values = ['startingtime' => $startingtimerecentactivity];
-
-        $rs = $DB->get_recordset_sql($sql, $values);
-        $recentcourses = [];
+        $rs = $DB->get_recordset_sql($sql);
+        $coursestocheck = [];
         foreach ($rs as $record) {
-            array_push($recentcourses, $record->courseid);
+            array_push($coursestocheck, $record->instanceid);
         }
         $rs->close();
 
-        return $recentcourses;
+        return $coursestocheck;
     }
 }
