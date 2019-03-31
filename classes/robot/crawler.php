@@ -1468,3 +1468,141 @@ class crawler {
         return $recentcourses;
     }
 }
+
+
+// 1. HEAD request
+//
+// HEAD Not Allowed  |  Content-Type  |  Content-Length  |  extern  |  to do
+//       yes              none/any             any           any    |  GET
+//        no              none/html            any           any    |  GET
+//        no              not html           unknown         any    |  GET
+//        no              not html            known          any    |  do not download, store length in database
+//
+// NOTE: download size is always limited on GET.
+//
+//
+// 2. GET request
+//
+// Content-Type  |  Content-Length  |  extern  |  to do
+// none/not html         known          any    |  do not download, store length in database
+// none/not html        unknown         any    |  do not download, store length=unknown in database
+//     html              known          yes    |  store length in database, try to extract title, limit download size
+//     html             unknown         yes    |  store length=unknown in database, try to extract title, limit download size
+//     html              known           no    |  store length in database after full download, fully parse
+//     html             unknown          no    |  store length in database after full download, fully parse
+
+/*
+Avoid downloading big resources
+
+Bigger changes to the web scraping semantics, modelled after the
+following principles:
+
+We account for the case that the server is not a general-purpose web
+server (as referenced in RFC 7231 section 4.1
+<https://tools.ietf.org/html/rfc7231#section-4.1>), and that it does not
+support HEAD, but only understands GET. The server will signal this in
+the response with 405 Method Not Allowed.
+
+It might happen that the server does not send a Content-Type header
+field. Reasons for this can be an improperly configured server, the
+server simply not knowing the media type of the representation, or
+something else. For security reasons, we do _not_ implement content
+sniffing to find out whether the referenced representation is an HTML
+document. Instead, we assume the media type to be
+"application/octet-stream" (which means that we ignore the content of
+the document). See RFC 7231 section 3.1.1.5
+<https://tools.ietf.org/html/rfc7231#section-3.1.1.5>.
+
+RFC 7231 section 4.3.2
+<https://tools.ietf.org/html/rfc7231#section-4.3.2> mandates that
+a) the Content-Length header field may be omitted in a response to a
+   HEAD request, even though it would be sent in a response to the
+   request with the GET method, and
+b) the server SHOULD send the Content-Type header field as it would if
+   the GET method was used.
+Because of this,
+a) if Content-Length is missing, we issue a GET request to find it, and
+b) if Content-Type is missing, we opt for doing the same.
+
+If we send a GET request, we ignore the header fields in the response to
+our previous HEAD request, and only use the header fields in the
+response the the GET request. The requested resource *might* have
+changed in the meantime, or the server *might* not have known details
+about it previously, and only compute them on a GET request.
+
+Even if the server does not allow/understand HEAD, _but_ does include
+Content-Type and/or Content-Length in its response, we do not trust
+these header fields, and use a GET request in order to get definitive
+values for them.
+
+If the response to the HEAD request gives us a Content-Type _and_
+Content-Length value which we consider reliable, we trust it and do not
+GET the linked document if it is not an HTML document.
+
+We still have to GET _HTML_ documents, because we like to parse them:
+a) in case of documents external to the Moodle instance, we like to
+   extract the document title;
+b) in case of documents within the Moodle instance, the documents shall
+   be parsed and links in them followed.
+We still apply restrictions for these two cases:
+a) processing of external documents will stop after a fixed length of
+   262144 bytes;
+b) internal documents will always be fully read and parsed in order to
+   follow all their links. This makes their exact length available for
+   being stored in the database.
+
+The fixed length of 262144 bytes(=256 KiB) has been chosen, because
+* the document title is located within the head element,
+* the encoding of an HTML5 document (usually also within the head
+  element) must be declared within the first 1024 bytes
+  <https://www.w3.org/TR/2017/REC-html52-20171214/document-metadata.html
+  #character-encoding-declaration>,
+* this amount should be by far enough for much HTML header content
+  including the document title, and
+* the length is not too much stress for processing on the host and for
+  the network.
+
+There is no need to fully parse external HTML documents, as their links
+are ignored. Parsing can be aborted early if the document title has been
+seen.
+
+Non-HTML documents do not need to be read or parsed at all if their
+length is known in advance.
+
+External documents for which the server does not provide the
+Content-Length are a problem. They are handled as follows:
+* external HTML documents are read until their title is detected, or
+  until 256 KiB have been read, whichever happens earlier;
+* reading of external non-HTML documents is interrupted as soon as their
+  body starts.
+In both cases, the length of the document is stored as “unknown”. This
+avoids unnecessary use of the network. It cannot be told whether the
+document is “big” or not. The crawler reports are adjusted accordingly.
+(And files with unknown length are included in the “big” report.)
+This is a sane way of handling the issue, because most servers serving
+static files should provide a Content-Length header field.
+And dynamically-generated huge files would rather be cached on server
+side, which makes their length known for future processing.
+
+The 256 KiB limit could be made a plugin configuration setting later.
+
+As a result of these rules, the number of requests to the server is
+often doubled (HEAD followed by GET), but big resources are not
+downloaded at all or are not entirely downloaded. Main purpose of this
+change is to avoid starting a download of a non-HTML document of which
+the size is alredy known after HEAD processing.
+
+The increase in data by the additional HEAD request and response is
+neglegible. The time needed to handle the links will increase slightly.
+The resources needed on server side may, depending on the server
+implementation, be a tiny bit more than before, or see a significant
+increase. We are not responsible for efficient server implementations,
+though, so the very worst thing that might happen is that server
+administrators block crawler accesses (for example, based on the
+User-Agent header field). This is still tolerable.
+*/
+
+// NOTE: must check in curl transfer/write/header function whether
+// document is external (we cannot know at first, because of possible
+// redirects, but can know as soon as the body data is flowing without
+// the headers signalling another redirect)
