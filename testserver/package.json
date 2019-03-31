@@ -1,0 +1,25 @@
+{
+  "name": "crawler-testserver",
+  "version": "0.0.1",
+  "description": "Test server for tool_crawler code",
+  "author": "Nicolas Roeser <nicolas.roeser@uni-ulm.de>",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "serve-favicon": "^2.5.0",
+    "morgan": "^1.9.1",
+    "cookie-parser": "~1.3.3",
+    "body-parser": "~1.10.0",
+    "debug": "~2.1.0",
+    "ejs": "~1.0.0"
+  },
+  "devDependencies": {
+    "gulp": "~3.8.10",
+    "gulp-nodemon": "~1.0.4",
+    "gulp-livereload": "~2.1.1"
+  }
+}
