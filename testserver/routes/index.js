@@ -21,4 +21,22 @@ router.get('/len', function(req, res) {
     res.end();
 });
 
+router.get('/headgettest', function(req, res) {
+    console.log("method: " + req.method);
+    if (req.method == 'HEAD') {
+        res.set('Content-Type', 'text/x-foobar');
+        res.set('Content-Length', '42');
+        res.status(200);
+        res.statusMessage = 'All Right';
+    } else {
+        res.status(200);
+        res.statusMessage = 'Here You Go';
+        res.set('Content-Length', '12');
+        //res.set('Content-Type', 'definitely/broken');
+        res.write(Buffer.from('Hello World\n'));
+    }
+
+    res.end();
+});
+
 module.exports = router;
