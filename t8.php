@@ -64,8 +64,21 @@ if ($data === FALSE) {
 
 
 
+if ($data === FALSE) {
+    if (curl_errno($h) === CURLE_ABORTED_BY_CALLBACK) {
+        // we have stopped the transfer
+        echo "(transfer stopped)\n";
+        $data = curl_multi_getcontent($h);
+        echo "type=".gettype($data)."\n";
+    } else {
+        // real ERROR
+        echo "done, ERROR\n";
+    }
+}
 
-echo "done:\n$data\n";
+if ($data !== FALSE) {
+    echo "done:\n>>$data<<\n";
+}
 
 $len = curl_getinfo($h, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
 
