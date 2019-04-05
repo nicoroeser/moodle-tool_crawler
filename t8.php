@@ -46,11 +46,11 @@ if ($data === FALSE) {
             echo "HEADR-current state of the Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
             return strlen($header);
         });
-        $accumulated = '';
-        curl_setopt($h, CURLOPT_WRITEFUNCTION, function($hdl, $content) use (&$accumulated) {
+        $chunks = array();
+        curl_setopt($h, CURLOPT_WRITEFUNCTION, function($hdl, $content) use (&$chunks) {
             echo "WRITE: $content\n";
             echo "WRITE-state of the Content-Type in write function: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
-            $accumulated .= $content;
+            $chunks[] = $content;
             return strlen($content);
         });
         curl_setopt($h, CURLOPT_PROGRESSFUNCTION, function($hdl, $totaldown, $down, $totalup, $up) {
@@ -79,7 +79,7 @@ if ($data === FALSE) {
     if (curl_errno($h) === CURLE_ABORTED_BY_CALLBACK) {
         // we have stopped the transfer
         echo "(transfer stopped)\n";
-        $data = $accumulated;
+        $data = implode($chunks);
     } else {
         // real ERROR
         echo "done, ERROR\n";
