@@ -36,6 +36,11 @@ if ($data === FALSE) {
 
         curl_setopt($h, CURLOPT_NOPROGRESS, false);
         curl_setopt($h, CURLOPT_BUFFERSIZE, 1024);
+        curl_setopt($h, CURLOPT_HEADERFUNCTION, function($hdl, $header) {
+            echo "HEADR: $header\n";
+            echo "HEADR-current state of the Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
+            return strlen($header);
+        });
         curl_setopt($h, CURLOPT_PROGRESSFUNCTION, function($hdl, $totaldown, $down, $totalup, $up) {
             echo "PRGRS: len=$totaldown, so far=$down, Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
             echo "PRGRS-returning " . ($down > 4096 ? "abort" : "continue") . "\n";
