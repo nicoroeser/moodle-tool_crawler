@@ -46,6 +46,13 @@ if ($data === FALSE) {
             echo "HEADR-current state of the Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
             return strlen($header);
         });
+        $accumulated = '';
+        curl_setopt($h, CURLOPT_WRITEFUNCTION, function($hdl, $content) use (&$accumulated) {
+            echo "WRITE: $content\n";
+            echo "WRITE-state of the Content-Type in write function: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
+            $accumulated .= $content;
+            return strlen($content);
+        });
         curl_setopt($h, CURLOPT_PROGRESSFUNCTION, function($hdl, $totaldown, $down, $totalup, $up) {
             echo "PRGRS: len=$totaldown, so far=$down, Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
             echo "PRGRS-returning " . ($down > 4096 ? "abort" : "continue") . "\n";
@@ -72,8 +79,7 @@ if ($data === FALSE) {
     if (curl_errno($h) === CURLE_ABORTED_BY_CALLBACK) {
         // we have stopped the transfer
         echo "(transfer stopped)\n";
-        $data = curl_multi_getcontent($h);
-        echo "type=".gettype($data)."\n";
+        $data = $accumulated;
     } else {
         // real ERROR
         echo "done, ERROR\n";
