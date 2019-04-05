@@ -37,6 +37,10 @@ if ($data === FALSE) {
 
         curl_setopt($h, CURLOPT_NOPROGRESS, false);
         curl_setopt($h, CURLOPT_BUFFERSIZE, 1024);
+        // Need progress function for cancelling the download.
+        // Do not need header function (or could wait for blank line delimiting the headers, and then evaluate content type).
+        // Seems we need write function (for storing the downloaded document in a string – need to parse title from it later; when
+        // we abort the transfer, the received content seems to be flushed).
         curl_setopt($h, CURLOPT_HEADERFUNCTION, function($hdl, $header) {
             echo "HEADR: $header\n";
             echo "HEADR-current state of the Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
