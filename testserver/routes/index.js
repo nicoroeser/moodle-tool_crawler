@@ -40,4 +40,20 @@ router.get('/headgettest', function(req, res) {
     res.end();
 });
 
+router.get('/reallylong', function(req, res) {
+    //res.set('Content-Length', '22');
+    res.set('Content-Type', 'text/html');
+    for (i = 0; i < 200; i++) {
+        res.set('X-Foobar-Filler-' + i, 'Useless header content (' + i + ')');
+    }
+    res.status(200, 'OK');
+    res.write('<!DOCTYPE html>\n<html><head><title>This is a really long document.</title></head><body><p>foo</p>\n');
+    for (i = 0; i < 999999; i++) {
+        res.write('<p>This HTML document may actually be the longest one on earth. Who knows?</p>\n');
+        res.write('<p>Here comes even more content. Blah, blah. You should stop downloading. Go outside, enjoy the sun!</p>\n');
+    }
+    res.write('</body><html>\n');
+    res.end();
+});
+
 module.exports = router;
