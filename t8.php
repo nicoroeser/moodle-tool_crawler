@@ -9,6 +9,7 @@ $h = curl_init();
 
 curl_setopt($h, CURLOPT_URL, $url);
 curl_setopt($h, CURLOPT_HEADER, true);
+curl_setopt($h, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($h, CURLOPT_NOBODY, true);
 
 $data = curl_exec($h);
