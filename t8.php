@@ -8,6 +8,8 @@ $url = 'http://127.0.0.1:8102/reallylong';
 $h = curl_init();
 
 curl_setopt($h, CURLOPT_URL, $url);
+curl_setopt($h, CURLOPT_FOLLOWLOCATION, true);
+curl_setopt($h, CURLOPT_MAXREDIRS, 5);
 curl_setopt($h, CURLOPT_HEADER, true);
 curl_setopt($h, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($h, CURLOPT_NOBODY, true);
