@@ -44,13 +44,13 @@ if ($data === FALSE) {
         // Seems we need write function (for storing the downloaded document in a string – need to parse title from it later; when
         // we abort the transfer, the received content seems to be flushed).
         curl_setopt($h, CURLOPT_HEADERFUNCTION, function($hdl, $header) {
-            echo "HEADR: $header\n";
+            echo 'HEADR: ' . preg_replace('/[\r\n]+$/', '', $header) . "\n";
             echo "HEADR-current state of the Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
             return strlen($header);
         });
         $chunks = array();
         curl_setopt($h, CURLOPT_WRITEFUNCTION, function($hdl, $content) use (&$chunks) {
-            echo "WRITE: $content\n";
+            echo 'WRITE: ' . preg_replace('/\r\n$/', '', $content) . "\n";
             echo "WRITE-state of the Content-Type in write function: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
             $chunks[] = $content;
             return strlen($content);
