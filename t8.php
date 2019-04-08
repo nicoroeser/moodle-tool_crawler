@@ -81,7 +81,14 @@ if ($data === FALSE) {
     if (curl_errno($h) === CURLE_ABORTED_BY_CALLBACK) {
         // we have stopped the transfer
         echo "(transfer stopped)\n";
-        $data = implode($chunks);
+
+        $httpcode = curl_getinfo($h, CURLINFO_RESPONSE_CODE);
+        if ($httpcode >= 300 && $httpcode < 400) { // Redirect.
+            // The stored chunks contain the _redirecting_ resource, so they are of no use.
+            $data = '';
+        } else {
+            $data = implode($chunks);
+        }
     } else {
         // real ERROR
         echo "done, ERROR\n";
