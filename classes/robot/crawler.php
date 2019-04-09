@@ -1606,3 +1606,18 @@ User-Agent header field). This is still tolerable.
 // document is external (we cannot know at first, because of possible
 // redirects, but can know as soon as the body data is flowing without
 // the headers signalling another redirect)
+
+
+/*
+Further notes:
+
+Things that can happen (possibly combined):
+* curl_exec signals error
+* 405 Method Not Allowed after HEAD
+* big header
+* big GET response body
+* redirection
+* we (have) abort(ed) the transfer
+* resource may be located on _external_ host
+
+*/
