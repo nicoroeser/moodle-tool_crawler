@@ -46,6 +46,15 @@ if ($data === FALSE) {
         curl_setopt($h, CURLOPT_HEADERFUNCTION, function($hdl, $header) {
             echo 'HEADR: ' . preg_replace('/[\r\n]+$/', '', $header) . "\n";
             echo "HEADR-current state of the Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
+
+            // find out whether curl stores the effective URI before the headers are complete (or the download has been completed)
+            // or at a later time
+            if (preg_match('/Location:/i', $header)) {
+                echo "HEADR-Location header field detected!\n";
+            }
+            $effectiveuri = curl_getinfo($hdl, CURLINFO_EFFECTIVE_URL);
+            echo "HEADR-effective URI: >$effectiveuri<\n";
+
             return strlen($header);
         });
         $chunks = array();
