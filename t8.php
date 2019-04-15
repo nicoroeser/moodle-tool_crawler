@@ -44,7 +44,7 @@ if ($data === FALSE) {
         // Seems we need write function (for storing the downloaded document in a string – need to parse title from it later; when
         // we abort the transfer, the received content seems to be flushed).
         curl_setopt($h, CURLOPT_HEADERFUNCTION, function($hdl, $header) {
-            echo 'HEADR: ' . preg_replace('/[\r\n]+$/', '', $header) . "\n";
+            echo 'HEADR: >' . preg_replace('/[\r\n]+$/', '', $header) . "<\n";
             echo "HEADR-current state of the Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
 
             // find out whether curl stores the effective URI before the headers are complete (or the download has been completed)
