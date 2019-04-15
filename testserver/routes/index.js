@@ -41,7 +41,7 @@ router.get('/headgettest', function(req, res) {
 });
 
 router.get('/reallylong', function(req, res) {
-    res.set('Content-Type', 'text/plain');
+    res.set('Content-Type', '             text/plain     ');
     res.set('Location', '/reallylong2');
     for (i = 0; i < 180; i++) {
         res.set('X-Foobar-Location-Blah-Filler-' + i, 'Useless header content (' + i + ') after sending Location header field');
