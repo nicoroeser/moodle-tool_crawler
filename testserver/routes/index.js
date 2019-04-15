@@ -67,7 +67,7 @@ router.get('/reallylong2', function(req, res) {
     res.status(200, 'OK');
     doc = '';
     doc += '<!DOCTYPE html>\n<html><head><title>This is a really long document.</title></head><body><p>foo</p>\n';
-    for (i = 0; i < 9; i++) {  // woah, this will need lots of memory (> 180 MB)
+    for (i = 0; i < 999999; i++) {  // woah, this will need lots of memory (> 180 MB)
         doc += '<p>This HTML document may actually be the longest one on earth. Who knows?</p>\n';
         doc += '<p>Here comes even more content. Blah, blah. You should stop downloading. Go outside, enjoy the sun!</p>\n';
     }
