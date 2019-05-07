@@ -42,17 +42,36 @@ router.get('/headgettest', function(req, res) {
 
 router.get('/reallylong', function(req, res) {
     res.set('Content-Type', '             text/plain     ');
-    res.set('Location', '/reallylong2');
+    res.set('Location', '/reallylong1.5');
     for (i = 0; i < 180; i++) {
         res.set('X-Foobar-Location-Blah-Filler-' + i, 'Useless header content (' + i + ') after sending Location header field');
     }
     res.status(302, 'Moved Temporarily');
     res.write('<!DOCTYPE html>\n<html><head><title>reallylong document has moved</title></head>\n');
-    res.write('<body><p><a href="/reallylong2">really long document</a> has moved.</p>\n');
+    res.write('<body><p><a href="/reallylong1.5">really long document</a> has moved.</p>\n');
     for (i = 0; i < 3; i++) {
         res.write('<p>This HTML document has moved.</p>\n');
         res.write('<p>Really! It has moved.</p>\n');
         res.write('<p>Only temporarily. But it has moved!</p>\n');
+    }
+    res.write('</body><html>\n');
+    res.end();
+});
+
+router.get('/reallylong1.5', function(req, res) {
+    res.set('Content-Type', 'text/html; charset=UTF-8');
+    for (i = 0; i < 100000; i++) {
+        res.set('X-Intermediate-Redirect-Filler-' + ('000000' + i).slice(-7),
+                'Very long header content which is really not necessary. xy');
+                    // should produce a header line which is 100 octets in length (including CRLF)
+    }
+    res.set('Location', '/reallylong2');
+    res.status(302, 'Moved Temporarily AGAIN');
+    res.write('<!DOCTYPE html>\n<html><head><title>reallylong document has moved (2nd)</title></head>\n');
+    res.write('<body><p><a href="/reallylong2">really long document</a> has moved.</p>\n');
+    for (i = 0; i < 30000; i++) {
+        res.write('<p>This fine HTML document has moved.</p>\n');
+        res.write('<p>Just temporarily.</p>\n');
     }
     res.write('</body><html>\n');
     res.end();
