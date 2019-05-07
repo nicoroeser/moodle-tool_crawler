@@ -69,7 +69,7 @@ if ($data === FALSE) {
         curl_setopt($h, CURLOPT_PROGRESSFUNCTION, function($hdl, $totaldown, $down, $totalup, $up) {
             echo "PRGRS: len=$totaldown, so far=$down, Content-Type: >" . curl_getinfo($hdl, CURLINFO_CONTENT_TYPE) . "<\n";
             echo "PRGRS-returning " . ($down > 4096 ? "abort" : "continue") . "\n";
-            return ($down > 4096) ? 1 : 0;
+            return ($down > 409600000) ? 1 : 0;
         });
 
         $data = curl_exec($h);
