@@ -16,6 +16,8 @@ curl_setopt($h, CURLOPT_NOBODY, true);
 
 $data = curl_exec($h);
 
+echo "HEAD complete\n";
+
 if ($data === FALSE) {
     // ERROR
     echo "ERROR\n";
