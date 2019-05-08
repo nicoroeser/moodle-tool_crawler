@@ -111,9 +111,11 @@ if ($data !== FALSE) {
 }
 
 $len = curl_getinfo($h, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+$headerlen = curl_getinfo($h, CURLINFO_HEADER_SIZE);
 
 if ($len < 0) $len = 'unknown';
 echo "\nlen:$len\n";
 echo "The HTTP/ code: $httpcode\n";
+echo "header len: $headerlen\n";
 
 curl_close($h);
