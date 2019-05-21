@@ -24,8 +24,13 @@ function bigheader(req, res) {
 /* Sends a *small* header (a few bytes).
  */
 function smallheader(req, res) {
-    res.set('Content-Type', 'text/html; charset=UTF-8');
-            // We do not really deliver a HTML document, but we pretend to.
+    if (req.query.type === 'plain') {
+        var type = 'text/plain';
+    } else {
+        // We do not really deliver a HTML document, but we pretend to.
+        var type = 'text/html';
+    }
+    res.set('Content-Type', type + '; charset=UTF-8');
 }
 
 /* Adds a redirection (always uses 307 Temporary Redirect, which does not allow
@@ -34,7 +39,11 @@ function smallheader(req, res) {
  * @param dst the target URI.
  */
 function redirect_to(req, res, dst) {
-    res.set('Location', dst);
+    var plain = '';
+    if (req.query.type === 'plain') {
+        plain = '?type=plain';
+    }
+    res.set('Location', dst + plain);
     res.status(307, 'Temporary Redirect');
 }
 
