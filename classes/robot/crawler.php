@@ -1486,8 +1486,8 @@ class crawler {
 // Content-Type  |  Content-Length  |  extern  |  to do
 // none/not html         known          any    |  do not download, store length in database
 // none/not html        unknown         any    |  (*)
-//     html              known          yes    |  store length in database, try to extract title, limit download size
-//     html             unknown         yes    |  store length=unknown in database, try to extract title, limit download size
+//     html              known          yes    |  store length in database, try to extract title, limit download size (***)
+//     html             unknown         yes    |  store length=unknown in database, try to extract title, limit download size (**)
 //     html              known           no    |  store length in database after full download, fully parse
 //     html             unknown          no    |  store length in database after full download, fully parse
 //
@@ -1496,7 +1496,24 @@ class crawler {
 //     a) do not download, store length=unknown in database;
 //     b) download (GET request), but abort when over “big” size, and store exact length (if known) or length=more than X (will be
 //        used at report generation time to produce inexact report or “big” flag);
-//     c) fully download (GET request) and store exact length (later decide whether that was long).
+//     c) fully download (GET request) and store exact length (later decide whether that was long), change (**) to full download;
+//     d) same as c), and also change (***) to full download.
+//
+//     Should be combined handling for HTML/non-HTML documents; for external HTML with unknown length, too, this option should
+//     decide whether to fully GET the resource or not.
+//
+//     Rationale:
+//       * If internal and non-HTML, you can configure your server so that it sends the proper Content-Lenght header. No need to GET
+//         long resources.
+//
+//     Call the option ‘networkstrain’: “extent of using networking resources”:
+//     a) reasonable (may cause a few length=unknown entries, saves the environment, indeed reasonable for the web),
+//     b) resolute (more aggressively try to determine lengths, information about big files may become incomplete under certain
+//        unlikely conditions – when user has changed settings),
+//     c) excessive (always determine exact lengths, allow wasting *lots* of networking resources),
+//     d) wasteful (always determine exact lengths *and* document titles by all means, severely overdo network consumption).
+//
+//     Default value is d), however a) is the recommended setting, which really covers all reasonable cases.
 
 /*
 Avoid downloading big resources
