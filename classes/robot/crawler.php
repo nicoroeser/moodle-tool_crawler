@@ -1475,7 +1475,7 @@ class crawler {
 // HEAD Not Allowed  |  Content-Type  |  Content-Length  |  extern  |  to do
 //       yes              none/any             any           any    |  GET
 //        no              none/html            any           any    |  GET
-//        no              not html           unknown         any    |  GET
+//        no              not html           unknown         any    |  (*)
 //        no              not html            known          any    |  do not download, store length in database
 //
 // NOTE: download size is always limited on GET.
@@ -1485,11 +1485,18 @@ class crawler {
 //
 // Content-Type  |  Content-Length  |  extern  |  to do
 // none/not html         known          any    |  do not download, store length in database
-// none/not html        unknown         any    |  do not download, store length=unknown in database
+// none/not html        unknown         any    |  (*)
 //     html              known          yes    |  store length in database, try to extract title, limit download size
 //     html             unknown         yes    |  store length=unknown in database, try to extract title, limit download size
 //     html              known           no    |  store length in database after full download, fully parse
 //     html             unknown          no    |  store length in database after full download, fully parse
+//
+//
+// (*) Depending on configuration option, do one of these:
+//     a) do not download, store length=unknown in database;
+//     b) download (GET request), but abort when over “big” size, and store exact length (if known) or length=more than X (will be
+//        used at report generation time to produce inexact report or “big” flag);
+//     c) fully download (GET request) and store exact length (later decide whether that was long).
 
 /*
 Avoid downloading big resources
