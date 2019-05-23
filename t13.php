@@ -13,7 +13,7 @@ curl_setopt($h, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($h, CURLOPT_MAXREDIRS, 5);
 curl_setopt($h, CURLOPT_RETURNTRANSFER, false);
 curl_setopt($h, CURLOPT_HEADER, true);
-curl_setopt($h, CURLOPT_HTTPGET, true);
+curl_setopt($h, CURLOPT_NOBODY, true);
 curl_setopt($h, CURLOPT_BUFFERSIZE, 1024);
 curl_setopt($h, CURLOPT_TIMEOUT, 10);
 //curl_setopt($h, CURLOPT_TIMEOUT_MS, 2);
@@ -24,6 +24,7 @@ curl_setopt($h, CURLOPT_PROGRESSFUNCTION,
         function($resource, $expecteddownbytes, $downbytes, $expectedupbytes, $upbytes) use (&$active) {
     //$sizelimit = 4096;
     //return ($downbytes > $sizelimit) ? 1 : 0;
+echo "PROGRESS: $expecteddownbytes, $downbytes, $expectedupbytes, $upbytes\n";
     return $active ? 1 : 0;
 });
 
