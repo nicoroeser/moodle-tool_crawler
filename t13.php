@@ -29,8 +29,9 @@ echo "PROGRESS: $expecteddownbytes, $downbytes, $expectedupbytes, $upbytes\n";
 });
 
 $responsenumber = 0;
+$hdrlen = 0;
 curl_setopt($h, CURLOPT_HEADERFUNCTION,
-        function($hdl, $header) use (&$active, &$responsenumber) {
+        function($hdl, $header) use (&$active, &$responsenumber, &$hdrlen) {
     if (preg_match('@^HTTP/[^ ]+ ([0-9]+) ([^\r\n]*)@', $header)) {
         $responsenumber++;
         echo "===== RESPONSE $responsenumber STARTS =====\n";
@@ -41,7 +42,12 @@ curl_setopt($h, CURLOPT_HEADERFUNCTION,
             $active = true;
         }
     }
-    return strlen($header);
+    $len = strlen($header);
+    $hdrlen += $len;
+    if ($hdrlen > 102400) {
+        echo "HEADER_LEN=$hdrlen\n";
+    }
+    return $len;
 });
 
 $chunks = array();
