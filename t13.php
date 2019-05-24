@@ -4,7 +4,7 @@
 //$url = 'https://qa.moodle.net/';
 //$url = 'http://127.0.0.1:8102/';
 //$url = 'http://127.0.0.1:8102/len';
-$url = 'http://127.0.0.1:8102/reallylong';
+$url = 'http://127.0.0.1:8102/reallylong1.5';
 
 $h = curl_init();
 
@@ -12,8 +12,7 @@ curl_setopt($h, CURLOPT_URL, $url);
 curl_setopt($h, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($h, CURLOPT_MAXREDIRS, 5);
 curl_setopt($h, CURLOPT_RETURNTRANSFER, false);
-curl_setopt($h, CURLOPT_HEADER, true);
-curl_setopt($h, CURLOPT_NOBODY, true);
+curl_setopt($h, CURLOPT_HEADER, false);
 curl_setopt($h, CURLOPT_BUFFERSIZE, 1024);
 curl_setopt($h, CURLOPT_TIMEOUT, 10);
 //curl_setopt($h, CURLOPT_TIMEOUT_MS, 2);
@@ -25,7 +24,9 @@ curl_setopt($h, CURLOPT_PROGRESSFUNCTION,
     //$sizelimit = 4096;
     //return ($downbytes > $sizelimit) ? 1 : 0;
 echo "PROGRESS: $expecteddownbytes, $downbytes, $expectedupbytes, $upbytes\n";
-    return $active ? 1 : 0;
+    //if ($downbytes > 1024*1024) return 1;
+    return 0;
+    //return $active ? 1 : 0;
 });
 
 $responsenumber = 0;
@@ -58,6 +59,8 @@ curl_setopt($h, CURLOPT_WRITEFUNCTION, function($hdl, $content) use (&$chunks) {
 
 $data = curl_exec($h);
 
+$chunkcount = count($chunks);
+
 if ($data === FALSE) {
     $err = curl_errno($h);
     $aborted = $err === CURLE_ABORTED_BY_CALLBACK || $err == CURLE_OPERATION_TIMEDOUT;
@@ -81,6 +84,8 @@ $ishtml = (strpos($contenttype, 'text/html') === 0);
 $len = curl_getinfo($h, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
 $lengthknown = (is_double($len) && $len > -1);
 
+$size = curl_getinfo($h, CURLINFO_SIZE_DOWNLOAD);
+
 // split into header and body
 $hdrlen = curl_getinfo($h, CURLINFO_HEADER_SIZE);
 if ($data !== FALSE) {
@@ -99,6 +104,8 @@ echo "Is HTML       : $ishtml\n";
 echo "Header length : $hdrlen\n";
 echo "Content-Length: $len\n";
 echo "Length known  : " . ($lengthknown ? 'true' : 'false') . "\n";
+echo "Download size : $size\n";
+echo "Chunk count   : $chunkcount\n";
 echo "\n";
 echo "Header: >$hdr<\n";
 echo "Body: >$bdy<\n";

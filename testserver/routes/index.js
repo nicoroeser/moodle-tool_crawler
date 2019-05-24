@@ -60,20 +60,21 @@ router.get('/reallylong', function(req, res) {
 
 router.get('/reallylong1.5', function(req, res) {
     res.set('Content-Type', 'text/html; charset=UTF-8');
-    for (i = 0; i < 99999; i++) {
+    for (i = 0; i < 9; i++) {
         res.set('X-Intermediate-Redirect-Filler-' + ('000000' + i).slice(-7),
                 'Very long header content which is really not necessary. xy');
                     // should produce a header line which is 100 octets in length (including CRLF)
     }
     res.set('Location', '/reallylong2');
     res.status(302, 'Moved Temporarily AGAIN');
-    res.write('<!DOCTYPE html>\n<html><head><title>reallylong document has moved (2nd)</title></head>\n');
-    res.write('<body><p><a href="/reallylong2">really long document</a> has moved.</p>\n');
-    for (i = 0; i < 3; i++) {
-        res.write('<p>This fine HTML document has moved.</p>\n');
-        res.write('<p>Just temporarily.</p>\n');
+    r = '<!DOCTYPE html>\n<html><head><title>reallylong document has moved (2nd)</title></head>\n';
+    r += '<body><p><a href="/reallylong2">really long document</a> has moved.</p>\n';
+    for (i = 0; i < 3000000; i++) {
+        r += '<p>This fine HTML document has moved.</p>\n';
+        r += '<p>Just temporarily.</p>\n';
     }
-    res.write('</body><html>\n');
+    r += '</body><html>\n';
+    res.send(r);
     res.end();
 });
 
@@ -86,13 +87,14 @@ router.get('/reallylong2', function(req, res) {
     res.status(200, 'OK');
     doc = '';
     doc += '<!DOCTYPE html>\n<html><head><title>This is a really long document.</title></head><body><p>foo</p>\n';
-    for (i = 0; i < 999; i++) {
+    for (i = 0; i < 1; i++) {
         doc += '<p>This HTML document may actually be the longest one on earth. Who knows?</p>\n';
         doc += '<p>Here comes even more content. Blah, blah. You should stop downloading. Go outside, enjoy the sun!</p>\n';
     }
     doc += '</body><html>\n';
-    res.write(doc);
-    res.write(' \n');
+    //res.write(doc);
+    //res.write(' \n');
+    res.send(doc);
     res.end();
 });
 
