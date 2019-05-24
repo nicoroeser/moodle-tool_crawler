@@ -3,8 +3,8 @@
 
 //$url = 'https://qa.moodle.net/';
 //$url = 'http://127.0.0.1:8102/';
-//$url = 'http://127.0.0.1:8102/len';
-$url = 'http://127.0.0.1:8102/reallylong1.5';
+$url = 'http://127.0.0.1:8102/len';
+//$url = 'http://127.0.0.1:8102/reallylong1.5';
 
 $h = curl_init();
 
@@ -24,7 +24,7 @@ curl_setopt($h, CURLOPT_PROGRESSFUNCTION,
     //$sizelimit = 4096;
     //return ($downbytes > $sizelimit) ? 1 : 0;
 echo "PROGRESS: $expecteddownbytes, $downbytes, $expectedupbytes, $upbytes\n";
-    //if ($downbytes > 1024*1024) return 1;
+    if ($downbytes > 1024*1024) return 1;
     return 0;
     //return $active ? 1 : 0;
 });
@@ -94,6 +94,8 @@ if ($data !== FALSE) {
 } else {
     $hdr = $bdy = null;
 }
+
+$data = curl_exec($h);
 
 curl_close($h);
 

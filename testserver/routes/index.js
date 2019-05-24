@@ -12,10 +12,15 @@ router.get('/', function(req, res) {
 });
 
 router.get('/len', function(req, res) {
-    //res.set('Content-Length', '22');
+    res.set('Content-Length', '22');
     res.set('Content-Type', 'text/html');
     res.status(200, 'OK (Yeah)');
     res.write('<!DOCTYPE html>\n<html><head><title>This document is longer than 22 octets.</title></head><body>foo</body><html>\n');
+    for (i = 0; i < 100; i++) {
+        res.write('<p>This HTML document is overlong.</p>\n');
+        res.write('<p>Really! It is too long.</p>\n');
+        res.write('<p>Bad thing. Do something against it!</p>\n');
+    }
     res.write('\n');
     res.write('\n');
     res.end();
