@@ -74,7 +74,7 @@ router.get('/reallylong1.5', function(req, res) {
     res.status(302, 'Moved Temporarily AGAIN');
     r = '<!DOCTYPE html>\n<html><head><title>reallylong document has moved (2nd)</title></head>\n';
     r += '<body><p><a href="/reallylong2">really long document</a> has moved.</p>\n';
-    for (i = 0; i < 3000000; i++) {
+    for (i = 0; i < 3; i++) {
         r += '<p>This fine HTML document has moved.</p>\n';
         r += '<p>Just temporarily.</p>\n';
     }
@@ -91,10 +91,10 @@ router.get('/reallylong2', function(req, res) {
     }
     res.status(200, 'OK');
     doc = '';
-    doc += '<!DOCTYPE html>\n<html><head><title>This is a really long document.</title></head><body><p>foo</p>\n';
-    for (i = 0; i < 1; i++) {
-        doc += '<p>This HTML document may actually be the longest one on earth. Who knows?</p>\n';
-        doc += '<p>Here comes even more content. Blah, blah. You should stop downloading. Go outside, enjoy the sun!</p>\n';
+    doc += '<!DOCTYPE html>\n<html><head><title>This: a long document.</title></head><body><p></p>\n';
+    for (i = 0; i < 200; i++) {
+        doc += '<p>This HTML document may actually be the longest one on earth. Who knows? xxxxxxxxx</p>\n';
+        doc += '<p>Here comes even more content. Blah, blah. You should stop downloading. Go outside, enjoy the sun! xxxxx</p>\n';
     }
     doc += '</body><html>\n';
     //res.write(doc);
