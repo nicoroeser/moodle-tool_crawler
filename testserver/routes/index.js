@@ -46,15 +46,15 @@ router.get('/headgettest', function(req, res) {
 });
 
 router.get('/reallylong', function(req, res) {
-    res.set('Content-Type', '             text/plain     ');
+    res.set('Content-Type', 'text/plain; charset=UTF-8');
     //res.set('Location', '/reallylong1.5');
-    for (i = 0; i < 10000; i++) {
+    for (i = 0; i < 10; i++) {
         res.set('X-Foobar-Location-Blah-Filler-' + i, 'Useless header content (' + i + ') after sending Location header field');
     }
-    res.status(302, 'Moved Temporarily');
+    res.status(200, 'Just Great!');
     res.write('<!DOCTYPE html>\n<html><head><title>reallylong document has moved</title></head>\n');
     res.write('<body><p><a href="/reallylong1.5">really long document</a> has moved.</p>\n');
-    for (i = 0; i < 100000; i++) {
+    for (i = 0; i < 1000000; i++) {
         res.write('<p>This HTML document has moved.</p>\n');
         res.write('<p>Really! It has moved.</p>\n');
         res.write('<p>Only temporarily. But it has moved!</p>\n');
