@@ -328,8 +328,12 @@ class crawler {
             $excludes = str_replace("\r", '', self::get_config()->excludeexturl);
         }
         $excludes = explode("\n", $excludes);
-        if (count($excludes) > 0 && $excludes[0]) {
+        if (count($excludes) > 0) {
             foreach ($excludes as $exclude) {
+                $exclude = trim($exclude);
+                if ($exclude == '') {
+                    continue;
+                }
                 if (strpos($url, $exclude) > 0 ) {
                     return false;
                 }
