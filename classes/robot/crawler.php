@@ -328,15 +328,13 @@ class crawler {
             $excludes = str_replace("\r", '', self::get_config()->excludeexturl);
         }
         $excludes = explode("\n", $excludes);
-        if (count($excludes) > 0) {
-            foreach ($excludes as $exclude) {
-                $exclude = trim($exclude);
-                if ($exclude == '') {
-                    continue;
-                }
-                if (strpos($url, $exclude) > 0 ) {
-                    return false;
-                }
+        foreach ($excludes as $exclude) {
+            $exclude = trim($exclude);
+            if ($exclude == '') {
+                continue;
+            }
+            if (strpos($url, $exclude) > 0 ) {
+                return false;
             }
         }
 
@@ -390,15 +388,13 @@ class crawler {
         if ($shortname !== '' && $shortname !== null) {
             $excludes = str_replace("\r", '', self::get_config()->excludecourses);
             $excludes = explode("\n", $excludes);
-            if (count($excludes) > 0) {
-                foreach ($excludes as $exclude) {
-                    $exclude = trim($exclude);
-                    if ($exclude == '') {
-                        continue;
-                    }
-                    if (strpos($shortname, $exclude) !== false ) {
-                        return false;
-                    }
+            foreach ($excludes as $exclude) {
+                $exclude = trim($exclude);
+                if ($exclude == '') {
+                    continue;
+                }
+                if (strpos($shortname, $exclude) !== false ) {
+                    return false;
                 }
             }
         }
