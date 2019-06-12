@@ -321,7 +321,6 @@ class crawler {
             return false;
         }
 
-        $bad = 0;
         // If this URL is external then check the ext whitelist.
         if (!self::is_external($url)) {
             $excludes = str_replace("\r", '', self::get_config()->excludemdlurl);
@@ -332,13 +331,9 @@ class crawler {
         if (count($excludes) > 0 && $excludes[0]) {
             foreach ($excludes as $exclude) {
                 if (strpos($url, $exclude) > 0 ) {
-                    $bad = 1;
-                    break;
+                    return false;
                 }
             }
-        }
-        if ($bad) {
-            return false;
         }
 
         // Ideally this limit should be around 2000 chars but moodle has DB field size limits.
@@ -389,7 +384,6 @@ class crawler {
             }
         }
         if ($shortname !== '' && $shortname !== null) {
-            $bad = 0;
             $excludes = str_replace("\r", '', self::get_config()->excludecourses);
             $excludes = explode("\n", $excludes);
             if (count($excludes) > 0) {
@@ -399,13 +393,9 @@ class crawler {
                         continue;
                     }
                     if (strpos($shortname, $exclude) !== false ) {
-                        $bad = 1;
-                        break;
+                        return false;
                     }
                 }
-            }
-            if ($bad) {
-                return false;
             }
         }
 
