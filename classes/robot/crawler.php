@@ -333,7 +333,7 @@ class crawler {
             if ($exclude == '') {
                 continue;
             }
-            if (strpos($url, $exclude) > 0 ) {
+            if (preg_match($exclude, $url)) {
                 return false;
             }
         }

@@ -86,27 +86,27 @@ if ($hassiteconfig) {
         $settings->add(new admin_setting_configtextarea('tool_crawler/excludeexturl',
                                                     new lang_string('excludeexturl',     'tool_crawler'),
                                                     new lang_string('excludeexturldesc', 'tool_crawler'),
-                                                    'http://moodle.org/
-http://validator.w3.org/
-http://www.contentquality.com/' ));
+                                                    '@^https://moodle\.org/@
+@^https://validator\.w3\.org/@
+@^http://www\.contentquality\.com/@' ));
 
         $settings->add(new admin_setting_configtextarea('tool_crawler/excludemdlurl',
                                                     new lang_string('excludemdlurl',     'tool_crawler'),
                                                     new lang_string('excludemdlurldesc', 'tool_crawler'),
-                                                    "grading
-/admin
-/blog
-/badges
-/blocks/quickmail
-/calendar
-/enrol
-/help/
-/login
-/message
-/report
-/rss
-/user
-/tag/" ));
+                                                    "@grading@
+@/admin@
+@/blog@
+@/badges@
+@/blocks/quickmail@
+@/calendar@
+@/enrol@
+@/help/@
+@/login@
+@/message@
+@/report@
+@/rss@
+@/user@
+@/tag/@" ));
 
         $settings->add(new admin_setting_configtextarea('tool_crawler/excludemdlparam',
                                                     new lang_string('excludemdlparam',     'tool_crawler'),

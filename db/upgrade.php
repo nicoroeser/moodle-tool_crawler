@@ -80,5 +80,19 @@ function xmldb_tool_crawler_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019072600, 'tool', 'crawler');
     }
 
+    if ($oldversion < 2019072603) {
+        // Convert static strings to escaped regular expressions.
+
+        $records = $DB->get_records_sql("SELECT * FROM {config_plugins} WHERE plugin=? AND ( name=? OR name=? )",
+                ['tool_crawler', 'excludemdlurl', 'excludeexturl']);
+        $delimiter = '@'; // Avoid using a slash because many values may be URI parts with several slashes (too much to escape).
+        foreach ($records as $rec) {
+            $regex = $delimiter . preg_escape($rec->value, $delimiter) . $delimiter;
+            $DB->update_record('config_plugins', ['id' => $rec->id, 'value' => $regex]);
+        }
+
+        upgrade_plugin_savepoint(true, 2019072603, 'tool', 'crawler');
+    }
+
     return true;
 }

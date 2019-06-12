@@ -73,13 +73,23 @@ $string['event:crawlstartdesc'] = 'Link check crawl started {$a}';
 $string['eventrobotcleanupcompleted'] = 'Linkchecker robot cleanup completed';
 $string['eventrobotcleanupstarted'] = 'Linkchecker robot cleanup started';
 $string['excludeexturl'] = 'Exclude external URLs';
-$string['excludeexturldesc'] = 'One URL regex per line. Each is matched against the full URL.';
+$string['excludeexturldesc'] = '<p>One regular expression per line. Each is matched against the full URL. Each must use PHP PCRE syntax, include delimiter characters (slash is commonly used, others are allowed) and may end in modifiers.</p>
+<p>Examples:</p>
+<ul>
+<li><code>/\/boringdocument-[0-9]+\.html(\?[^#]*)?(#.*)?$/i</code></li>
+<li><code>@^http://non-moodle-host\.example/ignore-below-here/@</code></li>
+</ul>';
 $string['excludemdldom'] = 'Exclude Moodle DOM parts';
 $string['excludemdldomdesc'] = 'One CSS or XPath expression per line. The matched parts of the DOM will be removed before links are extracted.';
 $string['excludemdlparam'] = 'Exclude Moodle URL parameters';
 $string['excludemdlparamdesc'] = 'One parameter key per line. URLs using this will still be crawled but with these parameters removed to avoid duplicates.';
 $string['excludemdlurl'] = 'Exclude Moodle URLs';
-$string['excludemdlurldesc'] = 'One URL regex per line. Each is matched excluding the wwwroot.';
+$string['excludemdlurldesc'] = '<p>One regular expression per line. Each is matched against the full URL excluding the web site location (wwwroot). Each must use PHP PCRE syntax, include delimiter characters (slash is commonly used, others are allowed) and may end in modifiers.</p>
+<p>Examples:</p>
+<ul>
+<li><code>!^/mod/example/!</code></li>
+<li><code>/(hardly%20|un)important-ur[il]-(part|fraction|piece)/</code></li>
+</ul>';
 $string['excludecourses'] = 'Exclude courses';
 $string['excludecoursesdesc'] = 'One course short name substring per line. A course is excluded if one of these substrings appears in the short name of the course.';
 $string['fetcherror'] = 'Curl Error: {$a->errormessage}';
