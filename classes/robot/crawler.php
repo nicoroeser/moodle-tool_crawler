@@ -765,6 +765,10 @@ class crawler {
         // Remove any chunks of DOM that we know to be safe and don't want to follow.
         $excludes = explode("\n", $config->excludemdldom);
         foreach ($excludes as $exclude) {
+            $exclude = trim($exclude);
+            if ($exclude == '') {
+                continue;
+            }
             foreach ($html->find($exclude) as $e) {
                 $e->outertext = ' ';
             }
